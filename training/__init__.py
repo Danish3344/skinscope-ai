@@ -1,0 +1,2 @@
+"""SkinScope EfficientNet training package."""
+

@@ -1,0 +1,63 @@
+{
+  "seed": 42,
+  "target_classes": [
+    "Acne",
+    "Atopic Dermatitis",
+    "Psoriasis",
+    "Melanoma",
+    "Basal Cell Carcinoma",
+    "Seborrheic Keratosis",
+    "Rosacea",
+    "Vitiligo",
+    "Warts",
+    "Eczema"
+  ],
+  "image_extensions": [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp"
+  ],
+  "train_ratio": 0.7,
+  "validation_ratio": 0.15,
+  "test_ratio": 0.15,
+  "minimum_dimension": 64,
+  "materialize_imagefolder": true,
+  "active_dataset": "scin",
+  "sources": [
+    {
+      "name": "scin",
+      "type": "scin_metadata",
+      "root": "data/raw/scin",
+      "metadata": "scin_cases.csv",
+      "labels": "scin_labels.csv",
+      "image_directory": "dataset/images",
+      "case_id_column": "case_id",
+      "image_path_columns": ["image_1_path", "image_2_path", "image_3_path"],
+      "license_status": "clear_scin_data_use_license",
+      "training_allowed": true
+    },
+    {
+      "name": "kaggle_skin_diseases",
+      "type": "imagefolder",
+      "root": "data/raw/kaggle_skin_diseases",
+      "image_directory": "IMG_CLASSES",
+      "metadata": null,
+      "patient_id_column": null,
+      "lesion_id_column": null,
+      "license_status": "unclear_data_files_copyright_original_authors",
+      "training_allowed": false
+    },
+    {
+      "name": "fitzpatrick17k",
+      "type": "metadata_csv",
+      "root": "data/raw/fitzpatrick17k",
+      "metadata": "fitzpatrick17k.csv",
+      "image_directory": "images",
+      "label_column": "label",
+      "filename_columns": ["md5hash", "url_alphanum"],
+      "patient_id_column": null,
+      "lesion_id_column": null
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "model_name": "efficientnet_b0",
+  "image_size": 224,
+  "num_classes": 4,
+  "class_names": [
+    "Acne",
+    "Psoriasis",
+    "Rosacea",
+    "Eczema"
+  ]
+}

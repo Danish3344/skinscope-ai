@@ -1,0 +1,43 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Environment and model artifacts
+.env
+.kaggle/
+*.pth
+*.pt
+*.h5
+*.keras
+
+# Frontend
+node_modules/
+.pnpm-store/
+frontend/dist/
+*.local
+
+# Data and generated reports
+data/raw/*
+data/processed/*
+data/train/*
+data/validation/*
+data/test/*
+reports/*
+!data/**/.gitkeep
+!reports/.gitkeep
+
+# Explicit dataset/model safeguards
+data/**/*.jpg
+data/**/*.jpeg
+data/**/*.png
+data/**/*.webp
+backend/models/*.onnx
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

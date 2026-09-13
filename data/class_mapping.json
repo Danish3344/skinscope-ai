@@ -1,0 +1,62 @@
+{
+  "Acne": {
+    "dataset": "scin",
+    "dataset_labels": ["Acne"],
+    "mapping_type": "direct",
+    "notes": "SCIN weighted dermatologist label; included with case-level splitting."
+  },
+  "Atopic Dermatitis": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "unsupported",
+    "notes": "SCIN has Eczema labels, but they are not equivalent to a separately verified Atopic Dermatitis diagnosis."
+  },
+  "Psoriasis": {
+    "dataset": "scin",
+    "dataset_labels": ["Psoriasis"],
+    "mapping_type": "direct",
+    "notes": "SCIN weighted dermatologist label; retain case grouping and confidence filtering."
+  },
+  "Melanoma": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "unsupported",
+    "notes": "Excluded from the final SCIN model because only 3 validated images remain after exact-hash deduplication."
+  },
+  "Basal Cell Carcinoma": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "unsupported",
+    "notes": "Excluded from the final SCIN model because only 13 validated images remain after exact-hash deduplication."
+  },
+  "Seborrheic Keratosis": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "possible",
+    "notes": "The Kaggle folder 'Seborrheic Keratoses and other Benign Tumors' is a mixed category, not a direct Seborrheic Keratosis label."
+  },
+  "Rosacea": {
+    "dataset": "scin",
+    "dataset_labels": ["Rosacea"],
+    "mapping_type": "direct",
+    "notes": "SCIN weighted dermatologist label; included with case-level splitting."
+  },
+  "Vitiligo": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "unsupported",
+    "notes": "The Kaggle candidate's documented class folders do not include Vitiligo."
+  },
+  "Warts": {
+    "dataset": null,
+    "dataset_labels": [],
+    "mapping_type": "unsupported",
+    "notes": "Excluded from the final SCIN model because only 46 validated images remain after exact-hash deduplication."
+  },
+  "Eczema": {
+    "dataset": "scin",
+    "dataset_labels": ["Eczema"],
+    "mapping_type": "direct",
+    "notes": "Candidate direct folder label from the Kaggle dataset description. Counts require archive inspection."
+  }
+}

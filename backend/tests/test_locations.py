@@ -38,3 +38,21 @@ def test_location_rejects_invalid_provider_key(monkeypatch) -> None:
     response = client.get('/dermatologists', params={'query': 'Pune'})
     assert response.status_code == 503
     assert 'invalid' in response.json()['detail']
+
+
+def test_location_handles_quota_and_empty_results(monkeypatch) -> None:
+    class EmptyResponse:
+        status_code = 200
+        def json(self): return {'places': []}
+    monkeypatch.setenv('GOOGLE_PLACES_API_KEY', 'test-key')
+    monkeypatch.setattr(locations.httpx, 'post', lambda *args, **kwargs: EmptyResponse())
+    response = client.get('/dermatologists', params={'query': 'Nowhere'})
+    assert response.status_code == 200
+    assert response.json()['results'] == []
+
+    class QuotaResponse:
+        status_code = 429
+    monkeypatch.setattr(locations.httpx, 'post', lambda *args, **kwargs: QuotaResponse())
+    response = client.get('/dermatologists', params={'query': 'Pune'})
+    assert response.status_code == 503
+    assert 'quota' in response.json()['detail'].lower()

@@ -10,6 +10,10 @@
 6. With a loaded checkpoint, the service calls the training inference utility and returns the primary prediction, alternatives, disease information, and an educational/research disclaimer.
 7. The temporary file and Pillow image are cleaned up before the request completes.
 
+## Optional location flow
+
+After a prediction, the user may explicitly choose browser geolocation or enter a city. The frontend sends that one-off query to `GET /dermatologists`; coordinates are not persisted. The backend calls the official Google Places API (New) Text Search adapter with a restricted `GOOGLE_PLACES_API_KEY` and a minimal field mask. Provider-supplied address, phone, rating, and Google Maps URL fields are passed through; missing fields remain empty. Without a valid key, with quota/authentication failure, or when no places are returned, the API fails closed and the prediction remains usable.
+
 ## Development flow
 
 ```mermaid

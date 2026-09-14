@@ -4,6 +4,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+*.log
+*.tmp
+*.part
 
 # Environment and model artifacts
 .env

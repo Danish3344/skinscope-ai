@@ -1,12 +1,14 @@
 # SkinScope AI
 
-SkinScope AI is an educational and research-oriented web application for uploading or capturing a skin-condition image and obtaining a model classification when a compatible local checkpoint is available. It is not a medical device and must not be used for diagnosis or treatment decisions.
+SkinScope AI is an educational and research-oriented web application for uploading or capturing a skin-condition image and obtaining a model classification when a compatible local checkpoint is available. It is not a medical device, clinical decision-support system, or diagnostic service.
 
 ## Overview
 
 The project combines a React browser interface with a FastAPI service. The browser validates an image before upload; the API validates and normalizes it again, writes a temporary PNG, and passes that image to the inference boundary. When `backend/models/best_model.pth` is present and loadable, the backend returns the top prediction and alternatives. Without that local checkpoint, the API remains usable and explicitly returns `model_not_loaded` instead of fabricating a result.
 
-The repository also contains dataset-preparation, training, evaluation, and inference infrastructure for an EfficientNet-B0 classifier. The checked-in model metadata describes four classes: Acne, Psoriasis, Rosacea, and Eczema. Dataset images, prepared splits, reports, and checkpoints are intentionally excluded from Git.
+The repository also contains dataset-preparation, training, evaluation, and inference infrastructure for an EfficientNet-B0 classifier. The model supports exactly four classes: Eczema, Psoriasis, Acne, and Rosacea. Dataset images, prepared splits, reports, and checkpoints are intentionally excluded from Git.
+
+> **Research prototype notice:** An AI prediction is not a medical diagnosis. Do not use this project to make treatment or emergency-care decisions; consult a qualified clinician.
 
 ## Implemented features
 
@@ -69,6 +71,10 @@ No hardware, external database, cloud service, or authentication provider is imp
 - Node.js 20 or newer for the frontend
 - A compatible local model checkpoint at `backend/models/best_model.pth` only if live predictions are required
 
+## Clean-checkout reproducibility
+
+The public repository intentionally excludes SCIN images, generated splits, reports, and model weights. A clean checkout reproduces the application shell and tests immediately; real inference additionally requires an authorized copy of `backend/models/best_model.pth` placed in the ignored path. Dataset preparation or training requires separately acquiring SCIN under its data-use terms and following the documented gate.
+
 ## Installation and usage
 
 From the repository root, create the backend environment and start the API:
@@ -111,6 +117,17 @@ python training\train.py
 
 Training and data-use conditions are documented in [docs/dataset_strategy.md](docs/dataset_strategy.md), [docs/dataset_preparation.md](docs/dataset_preparation.md), and [docs/training.md](docs/training.md).
 
+## Deployment readiness
+
+The simplest deployment topology is two services:
+
+1. A Python 3.11 FastAPI service running Uvicorn, with the private checkpoint mounted at `backend/models/best_model.pth` and `FRONTEND_URL` set to the deployed frontend origin.
+2. A static React/Vite build served by a static host or CDN, with `VITE_API_URL` pointing to the HTTPS API origin.
+
+The backend needs the packages in `backend/requirements.txt`; the frontend needs Node.js and `npm install`. Optional live dermatologist search additionally requires a Google Cloud project with Places API (New) enabled, billing enabled, and a restricted key provided only as the runtime secret `GOOGLE_PLACES_API_KEY`. No deployment provider, domain, credentials, or model artifact is included in this repository, so deployment cannot be completed without the operator's hosting and secret configuration.
+
+Do not commit `.env`, model checkpoints, SCIN images, or generated reports. Use the platform's secret manager/environment settings and a private artifact store or mounted volume for the checkpoint.
+
 ## Testing
 
 Run the available automated checks from the repository root:
@@ -127,6 +144,8 @@ cd frontend
 npm run build
 ```
 
+The current automated backend suite covers successful real inference, upload validation, model health, location consent/error paths, missing/invalid Places credentials, quota errors, and empty provider results.
+
 ## Project structure
 
 ```text
@@ -139,17 +158,26 @@ docs/          Dataset, training, and architecture documentation
 reports/       Ignored generated evaluation outputs
 ```
 
-## Limitations and status
+## Limitations
 
 - This is an educational/research prototype, not a diagnostic service.
 - Live results depend on an unversioned, local checkpoint; no model file is distributed with the repository.
-- The repository does not include a public dataset, training report, measured accuracy, or clinical validation evidence.
+- The model covers only four conditions and was trained on a research dataset; it is not clinically validated.
+- Class imbalance limits minority-class performance; Psoriasis F1 is 0.3143 on the held-out test split.
+- Real-world image quality, skin tone, camera conditions, and unseen conditions may differ from the training data.
 - The four-class model has limited minority-class performance; Psoriasis F1 is 0.3143 on the held-out test split.
 - Uploaded images are temporarily processed by the server; this is not a persistent patient-record system.
 - Camera availability depends on browser permissions and a secure context such as localhost or HTTPS.
-- Live dermatologist search remains disabled until an authorized Google Places API key is configured.
+- Live dermatologist search requires an authorized Google Places API key and may be unavailable because of configuration, quota, network, or provider errors.
+- Results must never be interpreted as a diagnosis or a recommendation based on the model prediction.
 
-Future work may include reproducible release artifacts for an authorized model, documented evaluation results, and expanded validation only after appropriate dataset and clinical-review processes.
+## Future improvements
+
+- Larger, more balanced and diverse authorized datasets; additional skin conditions.
+- Stronger architectures and calibrated uncertainty estimates.
+- Prospective clinical validation with appropriate governance and expert review.
+- Broader legitimate dermatologist/provider integrations with clear provenance.
+- Reproducible private model-artifact releases and monitoring for data drift.
 
 ## Privacy and medical safety
 

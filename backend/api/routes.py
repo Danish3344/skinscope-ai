@@ -26,7 +26,7 @@ async def nearby_dermatologists(lat: float | None = None, lng: float | None = No
     if (lat is None) != (lng is None):
         raise HTTPException(status_code=400, detail="Latitude and longitude must be provided together.")
     try:
-        return {"results": search_dermatologists(NearbySearch(lat, lng, query)), "source": "configured_places_provider"}
+        return {**search_dermatologists(NearbySearch(lat, lng, query)), "source": "configured_places_provider"}
     except LocationProviderNotConfigured as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 

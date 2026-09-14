@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
 from backend.ml.inference import MODEL_SERVICE, predict
+from backend.locations import LocationProviderNotConfigured, NearbySearch, search_dermatologists
 from backend.schemas import PredictionResponse
 from backend.utils.image_utils import (
     ALLOWED_MIME_TYPES,
@@ -15,6 +16,19 @@ from backend.utils.image_utils import (
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+@router.get("/dermatologists", tags=["location"])
+async def nearby_dermatologists(lat: float | None = None, lng: float | None = None, query: str | None = None) -> dict[str, object]:
+    """Return provider-backed listings only after explicit user location request."""
+    if lat is None and lng is None and not query:
+        raise HTTPException(status_code=400, detail="Provide a city/location or latitude and longitude.")
+    if (lat is None) != (lng is None):
+        raise HTTPException(status_code=400, detail="Latitude and longitude must be provided together.")
+    try:
+        return {"results": search_dermatologists(NearbySearch(lat, lng, query)), "source": "configured_places_provider"}
+    except LocationProviderNotConfigured as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/health", tags=["system"])

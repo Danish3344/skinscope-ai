@@ -5,6 +5,7 @@ import CameraCapture from '../components/CameraCapture.jsx'
 import Disclaimer from '../components/Disclaimer.jsx'
 import ImagePreview from '../components/ImagePreview.jsx'
 import ImageUploader from '../components/ImageUploader.jsx'
+import LocationSearch from '../components/LocationSearch.jsx'
 import { getHealth, predictImage } from '../services/api.js'
 import { readImageDimensions, validateImageFile } from '../utils/imageValidation.js'
 
@@ -121,6 +122,7 @@ export default function Home() {
               {isAnalyzing ? 'Analyzing image…' : 'Analyze image'}
             </button>
             <div className="mt-5"><AnalysisResult result={result} /></div>
+            {result?.prediction && <LocationSearch />}
           </div>
 
           <div className="space-y-6">

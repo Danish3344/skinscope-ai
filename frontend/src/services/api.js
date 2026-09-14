@@ -17,4 +17,10 @@ export async function predictImage(file) {
   return response.data
 }
 
+export async function findDermatologists({ latitude, longitude, query }) {
+  const params = query ? { query } : { lat: latitude, lng: longitude }
+  const response = await api.get('/dermatologists', { params, timeout: 15000 })
+  return response.data
+}
+
 export default api

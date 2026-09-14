@@ -1,0 +1,14 @@
+.git
+.env
+.kaggle
+data/raw
+data/processed
+data/train
+data/validation
+data/test
+reports
+backend/models/*.pth
+frontend/node_modules
+frontend/dist
+__pycache__
+*.pyc

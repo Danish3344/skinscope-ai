@@ -128,6 +128,19 @@ The backend needs the packages in `backend/requirements.txt`; the frontend needs
 
 Do not commit `.env`, model checkpoints, SCIN images, or generated reports. Use the platform's secret manager/environment settings and a private artifact store or mounted volume for the checkpoint.
 
+### Container deployment
+
+The repository includes `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`, `docker-compose.yml`, and `.dockerignore`. The compose file is a deployment template, not a hosted service: it requires a private checkpoint path and deployed origins supplied through the environment.
+
+```powershell
+Copy-Item .env.example .env
+# Set MODEL_CHECKPOINT to a private local path and set VITE_API_URL/FRONTEND_URL.
+docker compose build
+docker compose up -d
+```
+
+The backend container listens on port 8000 and exposes `/health`; the frontend container serves the static build on port 8080. For a cloud deployment, use a private model registry/object store or a secret-mounted volume for the checkpoint, a managed container service for the backend, and a static hosting/CDN service for the frontend. Do not bake the checkpoint or API keys into a public image.
+
 ## Testing
 
 Run the available automated checks from the repository root:
@@ -165,7 +178,6 @@ reports/       Ignored generated evaluation outputs
 - The model covers only four conditions and was trained on a research dataset; it is not clinically validated.
 - Class imbalance limits minority-class performance; Psoriasis F1 is 0.3143 on the held-out test split.
 - Real-world image quality, skin tone, camera conditions, and unseen conditions may differ from the training data.
-- The four-class model has limited minority-class performance; Psoriasis F1 is 0.3143 on the held-out test split.
 - Uploaded images are temporarily processed by the server; this is not a persistent patient-record system.
 - Camera availability depends on browser permissions and a secure context such as localhost or HTTPS.
 - Live dermatologist search requires an authorized Google Places API key and may be unavailable because of configuration, quota, network, or provider errors.

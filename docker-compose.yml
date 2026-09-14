@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      FRONTEND_URL: ${FRONTEND_URL:?Set FRONTEND_URL to the deployed frontend origin}
+      GOOGLE_PLACES_API_KEY: ${GOOGLE_PLACES_API_KEY:-}
+    volumes:
+      - ${MODEL_CHECKPOINT:?Set MODEL_CHECKPOINT to a private local checkpoint path}:/app/backend/models/best_model.pth:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:?Set VITE_API_URL to the deployed backend origin}
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy

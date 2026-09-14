@@ -7,7 +7,7 @@ export default function AnalysisResult({ result }) {
   if (prediction) {
     return (
       <section className="rounded-lg border border-emerald-200 bg-emerald-50 p-5" aria-live="polite">
-        <p className="text-sm font-bold uppercase tracking-wider text-sage">Prediction</p>
+        <p className="text-sm font-bold uppercase tracking-wider text-sage">AI prediction</p>
         <h3 className="mt-2 text-2xl font-semibold text-ink">{prediction.disease}</h3>
         <p className="mt-1 text-slate-700">Confidence: {confidence}%</p>
         {uncertain && <p className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm font-semibold text-amber-900">Prediction uncertain. Please consult a qualified dermatologist.</p>}
@@ -39,7 +39,7 @@ export default function AnalysisResult({ result }) {
       <h3 className="mt-2 text-xl font-semibold text-ink">ML model is not connected yet.</h3>
       <p className="mt-2 leading-6 text-slate-700">The image was successfully received, validated, and processed by the backend.</p>
       {result.image && <p className="mt-2 text-sm text-slate-600">Verified image: {result.image.width} × {result.image.height} px · {result.image.format}</p>}
-      <p className="mt-3 text-sm font-semibold text-sage">Phase 3 will connect the trained skin-disease classification model.</p>
+      <p className="mt-3 text-sm font-semibold text-sage">AI prediction — research prototype, not a medical diagnosis.</p>
     </section>
   )
 }

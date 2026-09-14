@@ -13,3 +13,6 @@ class PredictionResponse(BaseModel):
     disclaimer: str | None = None
     message: str
     image: dict[str, int | str]
+    model_name: str | None = None
+    class_names: list[str] = Field(default_factory=list)
+    image_size: int | None = None

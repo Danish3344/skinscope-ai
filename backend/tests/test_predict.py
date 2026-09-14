@@ -16,47 +16,22 @@ def make_image_bytes(image_format: str = "PNG") -> bytes:
     return buffer.getvalue()
 
 
-def test_predict_accepts_valid_image_and_returns_placeholder(monkeypatch: pytest.MonkeyPatch) -> None:
-    temporary_path: Path | None = None
-
-    def capture_inference_path(image_path: Path) -> dict[str, object]:
-        nonlocal temporary_path
-        temporary_path = image_path
-        assert image_path.is_file()
-        with Image.open(image_path) as normalized:
-            assert normalized.mode == "RGB"
-            assert normalized.format == "PNG"
-        return {
-            "success": True,
-            "status": "model_not_loaded",
-            "prediction": None,
-            "confidence": None,
-            "alternatives": [],
-            "disease_info": None,
-            "disclaimer": None,
-            "message": "ML model has not been trained or installed yet.",
-        }
-
-    monkeypatch.setattr("backend.api.routes.predict", capture_inference_path)
+def test_predict_accepts_valid_image_and_returns_real_prediction() -> None:
     response = client.post(
         "/predict",
         files={"image": ("lesion.png", make_image_bytes(), "image/png")},
     )
 
     assert response.status_code == 200
-    assert response.json() == {
-        "success": True,
-        "status": "model_not_loaded",
-        "prediction": None,
-        "confidence": None,
-        "alternatives": [],
-        "disease_info": None,
-        "disclaimer": None,
-        "message": "ML model has not been trained or installed yet.",
-        "image": {"width": 64, "height": 48, "format": "PNG"},
-    }
-    assert temporary_path is not None
-    assert not temporary_path.exists()
+    body = response.json()
+    assert response.status_code == 200
+    assert body["status"] == "model_loaded"
+    assert body["prediction"]["disease"] in {"Eczema", "Psoriasis", "Acne", "Rosacea"}
+    assert 0 <= body["confidence"] <= 1
+    assert len(body["alternatives"]) == 3
+    assert abs(sum([body["confidence"], *[item["confidence"] for item in body["alternatives"]]]) - 1) < 1e-5
+    assert body["class_names"] == ["Acne", "Psoriasis", "Rosacea", "Eczema"]
+    assert body["image"] == {"width": 64, "height": 48, "format": "PNG"}
 
 
 @pytest.mark.parametrize(

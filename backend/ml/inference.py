@@ -62,7 +62,8 @@ class ModelService:
 
         from training.inference import predict as model_predict
 
-        result = model_predict(image_path, self.model, self.class_names, self.image_size, self.device)
+        # Return the primary prediction plus three ranked alternatives (all four classes).
+        result = model_predict(image_path, self.model, self.class_names, self.image_size, self.device, top_k=4)
         primary = result["prediction"]
         return {
             "success": True,
@@ -73,6 +74,9 @@ class ModelService:
             "disease_info": get_disease_info(str(primary["disease"])),
             "disclaimer": "This AI prediction is for educational/research purposes only. It is not a medical diagnosis. Please consult a qualified dermatologist for professional evaluation.",
             "message": "Research prediction generated. This is not a medical diagnosis.",
+            "model_name": self.model_name,
+            "class_names": self.class_names,
+            "image_size": self.image_size,
         }
 
 
